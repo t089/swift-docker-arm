@@ -1,0 +1,36 @@
+FROM centos:8
+
+RUN yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
+
+RUN yum install --enablerepo=powertools -y \
+  binutils \
+  gcc \
+  git \
+  glibc-static \
+  libbsd-devel \
+  libedit \
+  libedit-devel \
+  libicu-devel \
+  libstdc++-static \
+  pkg-config \
+  python2 \
+  sqlite \
+  zlib-devel
+
+RUN ln -s /usr/bin/python2 /usr/bin/python
+
+
+ARG SWIFT_BIN_URL=https://github.com/futurejones/swift-arm64/releases/download/v5.3.2-RELEASE/swiftlang-5.3.2-centos-8-release-aarch64-3-2021-01-03.tar.gz
+
+
+RUN set -e; \
+    # - Grab curl here so we cache better up above
+    # - Download the Swift toolchain
+    curl -fsSL "$SWIFT_BIN_URL" -o swift.tar.gz \
+    # - Unpack the toolchain, set libs permissions, and clean up.
+    && tar -xzf swift.tar.gz --directory / \
+    && chmod -R o+r /usr/lib/swift \
+    && rm -rf swift.tar.gz
+
+# Print Installed Swift Version
+RUN swift --version
