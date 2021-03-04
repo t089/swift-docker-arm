@@ -1,0 +1,34 @@
+FROM amazonlinux:2
+
+RUN yum -y install \
+  binutils \
+  gcc \
+  git \
+  glibc-static \
+  gzip \
+  libbsd \
+  libcurl \
+  libedit \
+  libicu \
+  libsqlite \
+  libstdc++-static \
+  libuuid \
+  libxml2 \
+  tar \
+  tzdata \
+  zlib-devel
+
+
+ARG SWIFT_BIN_URL=https://github.com/futurejones/swift-arm64/releases/download/v5.3.3-RELEASE/swiftlang-5.3.3-amazon-linux-2-release-aarch64-4-2021-02-01.tar.gz
+
+
+RUN set -e; \
+    # - Download the Swift toolchain
+    curl -fsSL "$SWIFT_BIN_URL" -o swift.tar.gz \
+    # - Unpack the toolchain, set libs permissions, and clean up.
+    && tar -xzf swift.tar.gz --directory / \
+    && chmod -R o+r /usr/lib/swift \
+    && rm -rf swift.tar.gz
+
+# Print Installed Swift Version
+RUN swift --version

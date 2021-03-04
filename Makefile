@@ -1,18 +1,15 @@
-VERSION ?= 5.3.2
+VERSION ?= 5.3.3
 
 # specify name of `arm64` docker context
-ARM_CTX = 
+ARM_CTX = default
 
 # specify name of `amd64` docker context
-AMD_CTX = 
+AMD_CTX = amd64
 
 
 REPO = th089/swift
 
-RUN := $(MAKE) build -C ${VERSION} -f ../Makefile
-
-.PHONY: all
-all:  bionic focal amazonlinux2 centos8
+RUN = $(MAKE) build -C ${VERSION} -f ../Makefile VERSION=${VERSION}
 
 .PHONY: build
 build:
@@ -27,26 +24,20 @@ build:
 	docker manifest push  ${REPO}:${VERSION}-${DISTRO}
 
 .PHONY: bionic
-bionic: export DISTRO = bionic
-bionic: export VERSION = 5.3.2
+bionic: DISTRO = bionic
 bionic:
-	$(RUN)
+	$(RUN) DISTRO=bionic
+	docker manifest create --amend ${REPO}:bionic ${REPO}:${VERSION}-bionic-amd64 ${REPO}:${VERSION}-bionic-arm64
+	docker manifest push ${REPO}:bionic
 
 .PHONY: focal
-focal: export DISTRO = focal
-focal: export VERSION = 5.3.2
 focal:
-	$(RUN)
+	$(RUN) DISTRO=focal
 
 
 .PHONY: amazonlinux2
-amazonlinux2: export DISTRO = amazonlinux2
-amazonlinux2: export VERSION = 5.3.2
 amazonlinux2:
-	$(RUN)
+	$(RUN) DISTRO=amazonlinux2
 
-.PHONY: centos8
-centos8: export DISTRO = centos8
-centos8: export VERSION = 5.3.2
-centos8:
-	$(RUN)
+.PHONY: all
+all:  bionic focal amazonlinux2 centos8

@@ -1,6 +1,6 @@
 # Multi-arch images for Swift
 
-The Dockerfiles in this repo create Swift docker images for `arm64` based on [futurejones/swift-arm64](https://github.com/futurejones/swift-arm64).
+The Dockerfiles in this repo creates Swift docker images for `arm64` based on [futurejones/swift-arm64](https://github.com/futurejones/swift-arm64).
 
 The `Makefile` combines the `arm64` image with an official Swift `amd64` image to create a "mutli-arch" image. So a single image can be referenced in a Dockerfile and an image can be built for both `amd64` and `arm64`.
 
